@@ -1,22 +1,8 @@
-# **Traffic Sign Recognition** 
+# Traffic Sign Recognition Project 
 
-## Writeup
-
-### You can use this file as a template for your writeup if you want to submit it as a markdown file, but feel free to use some other method and submit a pdf if you prefer.
-
----
-
-# Environment
-Local environment was created via the modified ``environment_mod_gpu.yml``. Note that ``cudnn=6`` is still missing for proper usage of TensorFlow GPU 1.3, which does not seem provided anywhere on the common conda channels. Thus, download directly from NVIDIA and extract to ``Library`` folder of the environment.
-
----
-
-
-
-
-**Build a Traffic Sign Recognition Project**
 
 The goals / steps of this project are the following:
+
 * Load the data set (see below for links to the project data set)
 * Explore, summarize and visualize the data set
 * Design, train and test a model architecture
@@ -24,156 +10,123 @@ The goals / steps of this project are the following:
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-
-[//]: # (Image References)
-
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
-
-## Rubric Points
-### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
+I will discuss those steps in the current writeup following primarily the discussion of the template notebook. The main material has been developed in the [notebook](./Solution-Traffic_Sign_Classifier.ipynb), for which a respective downloaded HTML is also in the repository at the linked [location](./Solution-Traffic_Sign_Classifier.html).
 
 ---
-### Writeup / README
 
-#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
-
-You're reading it! and here is a link to my [project code](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb)
-
-### Data Set Summary & Exploration
-
-#### 1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
-
-I used the pandas library to calculate summary statistics of the traffic
-signs data set:
-
-* The size of training set is ?
-* The size of the validation set is ?
-* The size of test set is ?
-* The shape of a traffic sign image is ?
-* The number of unique classes/labels in the data set is ?
-
-#### 2. Include an exploratory visualization of the dataset.
-
-Here is an exploratory visualization of the data set. It is a bar chart showing how the data ...
-
-![alt text][image1]
-
-### Design and Test a Model Architecture
-
-#### 1. Describe how you preprocessed the image data. What techniques were chosen and why did you choose these techniques? Consider including images showing the output of each preprocessing technique. Pre-processing refers to techniques such as converting to grayscale, normalization, etc. (OPTIONAL: As described in the "Stand Out Suggestions" part of the rubric, if you generated additional data for training, describe why you decided to generate additional data, how you generated the data, and provide example images of the additional data. Then describe the characteristics of the augmented training set like number of images in the set, number of images for each class, etc.)
-
-As a first step, I decided to convert the images to grayscale because ...
-
-Here is an example of a traffic sign image before and after grayscaling.
-
-![alt text][image2]
-
-As a last step, I normalized the image data because ...
-
-I decided to generate additional data because ... 
-
-To add more data to the the data set, I used the following techniques because ... 
-
-Here is an example of an original image and an augmented image:
-
-![alt text][image3]
-
-The difference between the original data set and the augmented data set is the following ... 
+[traffic_signs]: ./docs/gallery.jpg "Traffic signs"
+[rel_frequency]: ./docs/ref_freq.jpg "Empirical distribution"
+[learning]: ./docs/learning.jpg "Learning history"
+[new_images]: ./docs/prediction_new_images.jpg "Traffic Sign 1"
 
 
-#### 2. Describe what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
+# Description
 
-My final model consisted of the following layers:
+## 1. Environment
+Local environment was created via the modified ``environment_mod_gpu.yml``. Note that ``cudnn=6`` is still missing for proper usage of TensorFlow GPU 1.3, which does not seem to be provided anywhere on the common conda channels. Thus, download directly from NVIDIA and extract its content to the ``Library`` folder of the environment folder.
 
-| Layer         		|     Description	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
- 
+## 2. Dataset
 
+This section includes the following tasks:
 
-#### 3. Describe how you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
+* Load the data set (see below for links to the project data set)
+* Explore, summarize and visualize the data set
 
-To train the model, I used an ....
+The traffic sign data has been provided via the following [location](https://s3-us-west-1.amazonaws.com/udacity-selfdrivingcar/traffic-signs-data.zip), which contains directly named pickle files of training, validation and test dataset. 
 
-#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+The traffic signs are colored images of size ``32x32`` and we have in total 43 different sign classes. The training set has 34799, the validation set has 4410 and the test set has 12630 samples. 
 
-My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+An example of a random image per class id from the training set is shown in the figure below. A mapping from class id to name is provided in the ``signnames.csv`` file. As you can observe, some cases are really challenging already with the human eye, e.g., id number 5 or 23, and the quality of some images is really poor.
 
-If an iterative approach was chosen:
-* What was the first architecture that was tried and why was it chosen?
-* What were some problems with the initial architecture?
-* How was the architecture adjusted and why was it adjusted? Typical adjustments could include choosing a different model architecture, adding or taking away layers (pooling, dropout, convolution, etc), using an activation function or changing the activation function. One common justification for adjusting an architecture would be due to overfitting or underfitting. A high accuracy on the training set but low accuracy on the validation set indicates over fitting; a low accuracy on both sets indicates under fitting.
-* Which parameters were tuned? How were they adjusted and why?
-* What are some of the important design choices and why were they chosen? For example, why might a convolution layer work well with this problem? How might a dropout layer help with creating a successful model?
+![][traffic_signs]
 
-If a well known architecture was chosen:
-* What architecture was chosen?
-* Why did you believe it would be relevant to the traffic sign application?
-* How does the final model's accuracy on the training, validation and test set provide evidence that the model is working well?
- 
+Additionally, let us check and visualize the class distribution. The following figure shows the relative distribution over the class for the training and validation set. While the classes are not unbiased, there are at least no classes grossly under- or over-represented. Additionally, the distribution between training and validation set is similar.
 
-### Test a Model on New Images
-
-#### 1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
-
-Here are five German traffic signs that I found on the web:
-
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
-
-The first image might be difficult to classify because ...
-
-#### 2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
-
-Here are the results of the prediction:
-
-| Image			        |     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+![][rel_frequency]
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+## 3. Neural network
 
-#### 3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
-
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
-
-For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
-
-| Probability         	|     Prediction	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| .60         			| Stop sign   									| 
-| .20     				| U-turn 										|
-| .05					| Yield											|
-| .04	      			| Bumpy Road					 				|
-| .01				    | Slippery Road      							|
+* Design, train and test a model architecture
 
 
-For the second image ... 
+The biggest challenge was to employ native TensorFlow, its old version and then even using the low level API. However, I thought it might be a good exercise for getting a more detailed impression of what it was like some years ago.
 
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-#### 1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+Let me comment on the choices:
 
+- Preprocessing: Normalize image from ``uint8`` to ``float32`` in the range [-1, 1]. No grayscale conversion was performed because color is a good additional feature of identifying traffic signs.
+- Network architecture: The architecture is very similar to LeNet5 with the appropriate in- and output adjustments and more neurons. Let me include the ``create_model`` function here, because it is the central part of the work and I commented the structure; apparently Python code in itself has a high level of readability: 
+```python
+# model architecture
+
+
+def create_model(x):
+
+    # block 1: 32, 3x3 + 1(S) conv, 2x2 + 2(S) max-pool
+    # shapes: (32, 32, 3) -> (30, 30, 32) -> (15, 15, 32)
+    conv1_W = tf.Variable(tf.truncated_normal(shape=(3, 3, CHANNELS, 32), mean=MU, stddev=SIGMA))
+    conv1_b = tf.Variable(tf.zeros(32))
+    conv1 = tf.nn.conv2d(x, conv1_W, strides=[1, 1, 1, 1], padding='VALID') + conv1_b
+    conv1 = tf.nn.relu(conv1)
+    conv1 = tf.nn.max_pool(conv1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
+    
+    # block 2: 64, 3x3 + 1(S) conv, 2x2 + 2(S) max-pool
+    # shapes: (15, 15, 32) -> (13, 13, 64) -> (6, 6, 64)
+    conv2_W = tf.Variable(tf.truncated_normal(shape=(3, 3, 32, 64), mean=MU, stddev=SIGMA))
+    conv2_b = tf.Variable(tf.zeros(64))
+    conv2 = tf.nn.conv2d(conv1, conv2_W, strides=[1, 1, 1, 1], padding='VALID') + conv2_b
+    conv2 = tf.nn.relu(conv2)
+    conv2 = tf.nn.max_pool(conv2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='VALID')
+    
+    # block 3: flatten, fully connected 256
+    # shapes: (6, 6, 64) -> (2304,) -> (256,)    
+    fc1 = tf.reshape(conv2, [-1, 2304])
+    fc1_W = tf.Variable(tf.truncated_normal(shape=(2304, 256), mean=MU, stddev=SIGMA))
+    fc1_b = tf.Variable(tf.zeros(256))
+    fc1 = tf.matmul(fc1, fc1_W) + fc1_b
+    fc1 = tf.nn.relu(fc1)
+    
+    # block 4: fully connected 256
+    # shapes: (256,) -> (256,)
+    fc2_W = tf.Variable(tf.truncated_normal(shape=(256, 256), mean=MU, stddev=SIGMA))
+    fc2_b = tf.Variable(tf.zeros(256))
+    fc2 = tf.matmul(fc1, fc2_W) + fc2_b
+    fc2 = tf.nn.relu(fc2)
+    
+    # logits: fully connected 43
+    # shapes: (256,) -> (43,)
+    fc3_W = tf.Variable(tf.truncated_normal(shape=(256, NUM_CLASSES), mean=MU, stddev=SIGMA))
+    fc3_b = tf.Variable(tf.zeros(NUM_CLASSES))
+    logits = tf.matmul(fc2, fc3_W) + fc3_b
+    
+    return logits
+```
+- Approach: Already LeNet5 trained for more epochs was giving a validation accuracy above 0.93. However with more neurons this was achieved even more consistently. Thus, I also did not pursue any further options like augmentation, regularization, etc. 
+- Training: Finally I trained for 50 epochs using a batch size of 128 and the Adam optimizer with an initial learning rate of 1e-3. There is clear overfitting between training and validation, but the required accuracy on the validation set is surpassed consistently, shown by the dotted line on the right side: ![][learning]
+
+After having trained and tuned the model, the evaluation on the test set delivers:
+
+| Test Set         		|          | 
+|:---------------------:|:--------:| 
+| Cross entropy loss    | 0.3866   |
+| Accuracy              | 95.30 %  |
+
+
+## 4. New Images
+
+The section covers:
+
+* Use the model to make predictions on new images
+* Analyze the softmax probabilities of the new images
+
+In the last part we were supposed to test the model on at least 5 new images and check and discuss its performance. 
+
+The original images are uploaded to the folder [``new_images``](./new_images). I search on the web and was capturing roughly squared-sized images of traffic signs. Note after inital loading they are resized so that the network accepts the input. The result is shown in the following figure, showing the probabilities of the top-5 probabilities, the image and the manual label true class (title of the figure):
+
+![][new_images]
+
+Let me add the following discussion:
+- The overall quality of the images is good, all traffic signs have been present in the dataset, and they are well captured from the front. I also picked a slightly snow covered traffic sign 'Beware of ice/snow' (last picture), for which I was interested to see if it is classified correctly while looking for images.
+- All 5 out of 5 cases have been classified correctly in this example, but with only 5 images no statistical sound comparison to the test accuracy is possible in my opinion.
+- From the top-5 prediction classes one observes that certain cases have been more difficult than others. While the 'No passing' sign has been more or less classified correctly to certainty, cases like the snow covered sign 'Beware of ice/snow' are not as certain. Here also a human might have some problems at the given resolution.
 
